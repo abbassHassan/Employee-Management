@@ -1,0 +1,95 @@
+﻿@inject SignInManager<IdentityUser> signInManager;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.PageTitle</title>
+
+    <link href="~/lib/bootstrap/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/css/bootstrap.rtl.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
+
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <a class="navbar-brand" asp-action="index" asp-controller="home">
+                <img src="~/images/employees.png" height="60" width="60" />
+            </a>
+
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav" style="margin-right: auto;">
+                    <li class="nav-item">
+                        <a asp-action="index" asp-controller="home" class="nav-link">List</a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="create" asp-controller="home" class="nav-link">Create</a>
+                    </li>
+                    @if(signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropDownMenuLink"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Manage
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropDownMenuLink" id="manageDropdownMenu">
+                                <a class="dropdown-item" asp-controller="Administration" asp-action="ListUsers">
+                                    Users
+                                </a>
+                                <a class="dropdown-item" asp-controller="Administration" asp-action="ListRoles">
+                                    Roles
+                                </a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <ul class="navbar-nav">
+                    @if(signInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                            <form method="post" asp-action="Logout" asp-controller="account">
+                                <button type="submit" class="nav-link btn btn-link py-0" style="width: auto">
+                                    Logout @User.Identity.Name
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a asp-action="Register" asp-controller="account" class="nav-link m-3">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-action="Login" asp-controller="account" class="nav-link m-3">Login</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </nav>
+
+        <div>
+            @RenderBody()
+        </div>
+        @RenderSection("Scripts", required: false)
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Hide the dropdown menu initially
+            $('#manageDropdownMenu').hide();
+
+            // Toggle the dropdown menu when the "Manage" button is clicked
+            $('#navbarDropDownMenuLink').click(function(e) {
+                e.preventDefault(); // Prevent the default action (navigating to the href)
+                $('#manageDropdownMenu').toggle(); // Toggle the visibility of the dropdown menu
+            });
+        });
+    </script>
+</body>
+</html>
